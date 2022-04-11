@@ -1,12 +1,65 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view />
+   
   </div>
 </template>
+<script>
+import {
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  setDoc,
+} from "firebase/firestore";
+import { db } from "@/helpers/firebase";
+export default {
+  name: "App",
+  data() {
+    return {
+      myData: [],
+    };
+  },
+  methods: {
+    async setSome() {
+      await setDoc(doc(db, "trabajadores", "LA"), {
+        name: "Los Angeles",
+        state: "CA",
+        country: "Chilesfdasd",
+      });
+      console.log("seted");
+    },
+    async deleteSome() {
+      await deleteDoc(doc(db, "trabajadores", "E8l1MVJUlYh6fdpxXiMg"));
+      console.log("deleted");
+    },
+
+    async addSome() {
+      try {
+        const docRef = await addDoc(collection(db, "trabajadores"), {
+          first: "Ada",
+          last: "Lovelace",
+          born: 1815,
+        });
+        console.log("Document written with ID: ", docRef.id);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async getData() {
+      const querySnapshot = await getDocs(collection(db, "trabajadores"));
+      querySnapshot.forEach((doc) => {
+        this.myData.push(doc.data());
+        // console.log(`${doc.id} => ${doc.data()}`);
+        console.log(this.myData);
+      });
+    },
+  },
+  created() {
+    this.getData();
+  },
+};
+</script>
 
 <style lang="scss">
 #app {
