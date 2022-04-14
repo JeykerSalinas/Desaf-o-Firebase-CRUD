@@ -8,6 +8,7 @@
           placeholder="Enter name"
           required
           label="Usuario:"
+          v-model="name"
         ></b-form-input>
         <div class="row mt-3">
           <div class="col-8">
@@ -42,6 +43,13 @@ export default {
     user: {
       type: Object,
       default: () => {},
+    },
+  },
+  computed: {
+    name: {
+      get() {
+        return this.user.name;
+      },
     },
   },
 };
