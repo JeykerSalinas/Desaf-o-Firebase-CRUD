@@ -37,7 +37,7 @@
             <b-button variant="danger" class="ms-3" @click="resetInput"
               >Limpiar</b-button
             >
-            <b-button variant="success" class="ms-3" @click="addSome(myNewUser)"
+            <b-button variant="success" class="ms-3" @click="addUser"
               >Agregar</b-button
             >
           </div>
@@ -69,43 +69,10 @@
                     <b-button
                       variant="success"
                       class="ms-3"
-                      @click="$bvModal.show('modal-' + i)"
+                      v-b-modal="'modal'"
+                      @click="edit(item)"
                       >Editar</b-button
                     >
-                    <b-modal :id="'modal-' + i" title="BootstrapVue">
-                      <b-col cols="12">
-                        <p>Ingrese usuario nuevo</p>
-                        <b-form-input
-                          type="text"
-                          placeholder="Enter name"
-                          required
-                          label="Usuario:"
-                          v-model="item.name"
-                        ></b-form-input>
-                        <div class="row mt-3">
-                          <div class="col-8">
-                            <p>Ingrese email</p>
-                            <b-form-input
-                              type="email"
-                              placeholder="Enter email"
-                              required
-                              label="Correo:"
-                              v-model="item.email"
-                            ></b-form-input>
-                          </div>
-                          <div class="col-4">
-                            <p>Ingrese edad</p>
-                            <b-form-input
-                              type="number"
-                              placeholder="Enter age"
-                              required
-                              label="Edad:"
-                              v-model="item.age"
-                            ></b-form-input>
-                          </div>
-                        </div>
-                      </b-col>
-                    </b-modal>
                   </td>
                 </tr>
               </tbody>
@@ -114,12 +81,17 @@
         </b-col>
       </b-row>
     </b-container>
+    <EditModal :user="currentUSer" />
   </div>
 </template>
 <script>
 import { mapActions, mapState } from "vuex";
+import EditModal from "@/components/EditModal.vue";
 export default {
   name: "App",
+  components: {
+    EditModal,
+  },
   data() {
     return {
       myNewUser: {
@@ -127,6 +99,7 @@ export default {
         age: "",
         email: "",
       },
+      currentUser: {},
     };
   },
   computed: {
@@ -134,18 +107,21 @@ export default {
   },
   methods: {
     ...mapActions(["getData", "deleteSome", "addSome", "setSome"]),
-    click() {
-      console.log("click");
+    edit(item) {
+      this.currentUser = item;
+      console.log(this.currentUser);
+    },
+    addUser() {
+      this.addSome(this.myNewUser);
+      this.myNewUser = {
+        name: "",
+        age: "",
+        email: "",
+      };
     },
   },
   created() {
     this.getData();
-    this.setSome({
-      name: "andrea",
-      age: "23",
-      email: "andrea",
-      id: "BFDRyXNFoqglIK24MrRD",
-    });
   },
 };
 </script>
