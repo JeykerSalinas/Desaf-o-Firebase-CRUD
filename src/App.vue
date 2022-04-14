@@ -37,7 +37,7 @@
             <b-button variant="danger" class="ms-3" @click="resetInput"
               >Limpiar</b-button
             >
-            <b-button variant="success" class="ms-3" @click="addSome"
+            <b-button variant="success" class="ms-3" @click="addSome(myNewUser)"
               >Agregar</b-button
             >
           </div>
@@ -60,12 +60,52 @@
                   <td>{{ item.age }}</td>
                   <td>{{ item.email }}</td>
                   <td>
-                    <b-button variant="danger" class="ms-3" @click="resetInput"
+                    <b-button
+                      variant="danger"
+                      class="ms-3"
+                      @click="deleteSome(item)"
                       >Eliminar</b-button
                     >
-                    <b-button variant="success" class="ms-3" @click="addUser"
+                    <b-button
+                      variant="success"
+                      class="ms-3"
+                      @click="$bvModal.show('modal-' + i)"
                       >Editar</b-button
                     >
+                    <b-modal :id="'modal-' + i" title="BootstrapVue">
+                      <b-col cols="12">
+                        <p>Ingrese usuario nuevo</p>
+                        <b-form-input
+                          type="text"
+                          placeholder="Enter name"
+                          required
+                          label="Usuario:"
+                          v-model="item.name"
+                        ></b-form-input>
+                        <div class="row mt-3">
+                          <div class="col-8">
+                            <p>Ingrese email</p>
+                            <b-form-input
+                              type="email"
+                              placeholder="Enter email"
+                              required
+                              label="Correo:"
+                              v-model="item.email"
+                            ></b-form-input>
+                          </div>
+                          <div class="col-4">
+                            <p>Ingrese edad</p>
+                            <b-form-input
+                              type="number"
+                              placeholder="Enter age"
+                              required
+                              label="Edad:"
+                              v-model="item.age"
+                            ></b-form-input>
+                          </div>
+                        </div>
+                      </b-col>
+                    </b-modal>
                   </td>
                 </tr>
               </tbody>
@@ -77,20 +117,11 @@
   </div>
 </template>
 <script>
-import {
-  collection,
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc,
-  setDoc,
-} from "firebase/firestore";
-import { db } from "@/helpers/firebase";
+import { mapActions, mapState } from "vuex";
 export default {
   name: "App",
   data() {
     return {
-      myData: [],
       myNewUser: {
         name: "",
         age: "",
@@ -98,43 +129,23 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapState(["myData"]),
+  },
   methods: {
-    async setSome() {
-      await setDoc(doc(db, "usuarios", "LA"), {
-        name: "Los Angeles",
-        state: "CA",
-        country: "Chilesfdasd",
-      });
-      console.log("seted");
-    },
-    async deleteSome() {
-      await deleteDoc(doc(db, "usuarios", "E8l1MVJUlYh6fdpxXiMg"));
-      console.log("deleted");
-    },
-
-    async addSome() {
-      try {
-        const docRef = await addDoc(collection(db, "usuarios"), {
-          first: "Ada",
-          last: "Lovelace",
-          born: 1815,
-        });
-        console.log("Document written with ID: ", docRef.id);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async getData() {
-      const querySnapshot = await getDocs(collection(db, "usuarios"));
-      querySnapshot.forEach((doc) => {
-        this.myData.push(doc.data());
-        // console.log(`${doc.id} => ${doc.data()}`);
-        console.log(this.myData);
-      });
+    ...mapActions(["getData", "deleteSome", "addSome", "setSome"]),
+    click() {
+      console.log("click");
     },
   },
   created() {
     this.getData();
+    this.setSome({
+      name: "andrea",
+      age: "23",
+      email: "andrea",
+      id: "BFDRyXNFoqglIK24MrRD",
+    });
   },
 };
 </script>
